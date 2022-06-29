@@ -3,69 +3,23 @@ const reducer = require('geofences-reducer')
 const geofences = require('./geofences.json')
 
 test('reduces geofences', () => {
-  const geofences = [
-    {
-      latitude: 51.51,
-      longitude: -0.36,
-      radius: 20000
-    },
-    {
-      latitude: 51.51,
-      longitude: -0.07,
-      radius: 20000
-    },
-    { // not required
-      latitude: 51.6,
-      longitude: -0.07,
-      radius: 20000
-    },
-    {
-      latitude: 51.51,
-      longitude: 0.12,
-      radius: 20000
-    },
-    {
-      latitude: 51.15,
-      longitude: -0.07,
-      radius: 20000
-    },
-    {
-      latitude: 51.72,
-      longitude: -0.07,
-      radius: 20000
-    },
-    { // duplicate
-      latitude: 51.72,
-      longitude: -0.07,
-      radius: 20000
-    }
-  ]
   expect(reducer.reduce(geofences)).toEqual([
-    {
-      latitude: 51.51,
-      longitude: -0.36,
-      radius: 20000
-    },
-    {
-      latitude: 51.51,
-      longitude: -0.07,
-      radius: 20000
-    },
-    {
-      latitude: 51.51,
-      longitude: 0.12,
-      radius: 20000
-    },
-    {
-      latitude: 51.15,
-      longitude: -0.07,
-      radius: 20000
-    },
-    {
-      latitude: 51.72,
-      longitude: -0.07,
-      radius: 20000
-    }
+    { latitude: 48.64989, longitude: 13.96389, radius: 40000 },
+    { latitude: 48.4043, longitude: 14.836, radius: 40000 },
+    { latitude: 47.86719, longitude: 13.3261, radius: 40000 },
+    { latitude: 47.86259, longitude: 14.6709, radius: 40000 },
+    { latitude: 48.4611, longitude: 13.43369, radius: 40000 },
+    { latitude: 47.87969, longitude: 14.13269, radius: 40000 },
+    { latitude: 48, longitude: 13.2318, radius: 40000 },
+    { latitude: 48.51739, longitude: 14.2951, radius: 40000 },
+    { latitude: 48.51129, longitude: 14.5008, radius: 40000 },
+    { latitude: 47.65489, longitude: 13.60929, radius: 40000 },
+    { latitude: 47.85749, longitude: 13.34189, radius: 40000 },
+    { latitude: 48.678, longitude: 13.90909, radius: 40000 },
+    { latitude: 48.2285, longitude: 13.02369, radius: 40000 },
+    { latitude: 48.25849, longitude: 13.03559, radius: 40000 },
+    { latitude: 48.22809, longitude: 14.8465, radius: 40000 },
+    { latitude: 48.18239, longitude: 13.78149, radius: 40000 }
   ])
 })
 
@@ -73,71 +27,21 @@ test('reduces geofences with custom precision', () => {
   const config = { precision: 5 }
 
   expect(reducer.reduce(geofences, config)).toEqual([
-    {
-      latitude: 48.64989,
-      longitude: 13.96389,
-      radius: 40000
-    },
-    {
-      latitude: 48.4043,
-      longitude: 14.836,
-      radius: 40000
-    },
-    {
-      latitude: 47.86719,
-      longitude: 13.3261,
-      radius: 40000
-    },
-    {
-      latitude: 47.86259,
-      longitude: 14.6709,
-      radius: 40000
-    },
-    {
-      latitude: 48.4611,
-      longitude: 13.43369,
-      radius: 40000
-    },
-    {
-      latitude: 47.87969,
-      longitude: 14.13269,
-      radius: 40000
-    },
-    {
-      latitude: 48,
-      longitude: 13.2318,
-      radius: 40000
-    },
-    {
-      latitude: 48.51129,
-      longitude: 14.5008,
-      radius: 40000
-    },
-    {
-      latitude: 47.65489,
-      longitude: 13.60929,
-      radius: 40000
-    },
-    {
-      latitude: 48.678,
-      longitude: 13.90909,
-      radius: 40000
-    },
-    {
-      latitude: 48.2285,
-      longitude: 13.02369,
-      radius: 40000
-    },
-    {
-      latitude: 48.22809,
-      longitude: 14.8465,
-      radius: 40000
-    },
-    {
-      latitude: 48.256,
-      longitude: 13.0367,
-      radius: 40000
-    }
+    { latitude: 48.64989, longitude: 13.96389, radius: 40000 },
+    { latitude: 48.4043, longitude: 14.836, radius: 40000 },
+    { latitude: 47.86719, longitude: 13.3261, radius: 40000 },
+    { latitude: 47.86259, longitude: 14.6709, radius: 40000 },
+    { latitude: 48.4611, longitude: 13.43369, radius: 40000 },
+    { latitude: 47.87969, longitude: 14.13269, radius: 40000 },
+    { latitude: 48, longitude: 13.2318, radius: 40000 },
+    { latitude: 48.51129, longitude: 14.5008, radius: 40000 },
+    { latitude: 47.65489, longitude: 13.60929, radius: 40000 },
+    { latitude: 48.678, longitude: 13.90909, radius: 40000 },
+    { latitude: 48.2285, longitude: 13.02369, radius: 40000 },
+    { latitude: 48.22809, longitude: 14.8465, radius: 40000 },
+    { latitude: 48.18239, longitude: 13.78149, radius: 40000 },
+    { latitude: 48.2946, longitude: 14.2868, radius: 40000 },
+    { latitude: 48.256, longitude: 13.0367, radius: 40000 }
   ])
 })
 

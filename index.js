@@ -96,7 +96,16 @@ function areGeofencesEqual(subject, target) {
 }
 
 function convertToGeohash(geofences, precision) {
-  return geofences.map(geofence => vicinityhash.convert(geofence, { precision }))
+  return geofences.map(geofence =>
+    vicinityhash.convert(
+      geofence,
+      {
+        precision,
+        compress: true,
+        compressMin: 1,
+        compressMax: precision
+      }
+  ))
 }
 
 function containsUniqueGeohash(subset, set) {
