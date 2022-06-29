@@ -7,4 +7,8 @@ export function reduce(
   config?: {
     precision?: number
   }
-): string[]
+): {
+  latitude: number,
+  longitude: number,
+  radius: number
+}[]
