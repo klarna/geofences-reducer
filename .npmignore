@@ -1,0 +1,4 @@
+.github
+images
+*.test.js
+geofences.json

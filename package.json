@@ -1,0 +1,24 @@
+{
+  "name": "geofences-reducer",
+  "version": "1.0.0",
+  "description": "Reduces overlapping geofences",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "keywords": [
+    "geofence",
+    "reducer",
+    "overlap",
+    "duplicate"
+  ],
+  "author": "Filipe Correa <filipecorrea@me.com> (http://github.com/filipecorrea)",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "vicinityhash": "^1.0.2"
+  },
+  "devDependencies": {
+    "jest": "^28.1.1"
+  }
+}
