@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-'use strict'
-
 import * as vicinityhash from 'vicinityhash'
 
 type Geofence = {
@@ -40,7 +38,7 @@ export function reduce (
   const geofencesRemoved: Geofence[] = []
   const geohashesRemoved: string[][] = []
 
-  // Calculate border
+  // Find geofences with unique geohashes
   for (let index = 0; index < geofencesDeduplicated.length; index++) {
     const geofence: Geofence = geofencesDeduplicated[index]
     const geofenceGeohashes: string[] = geohashes[index]
@@ -60,7 +58,7 @@ export function reduce (
   const geohashesCovered = convertToGeohash(geofencesReduced, config.precision)
   let geohashesCoveredUnique = [ ...new Set(geohashesCovered.flat()) ]
 
-  // Calculate center
+  // Find geofences within removed that contains missing geohashes
   for (let index = 0; index < geofencesRemoved.length; index++) {
     const geofence = geofencesRemoved[index]
     const geofenceGeohashes: string[] = geohashesRemoved[index]
@@ -104,7 +102,7 @@ function validateConfig(config: { precision: number }) {
 
 function deduplicate(geofences: Geofence[]): Geofence[] {
   return geofences.filter((geofence, index, geofences) => {
-    const indexFound = geofences.findIndex(geofenceFound =>
+    const indexFound: number = geofences.findIndex(geofenceFound =>
       areGeofencesEqual(geofenceFound, geofence)
     )
 
@@ -137,7 +135,7 @@ function convertToGeohash(geofences: Geofence[], precision: number) {
 
 function containsUniqueGeohash(subset: string[], set: string[]): boolean {
   for (const subsetPart of subset) {
-    let unique = false
+    let unique: boolean = false
     for (const setPart of set) {
       if (subsetPart.includes(setPart)) {
         unique = true
