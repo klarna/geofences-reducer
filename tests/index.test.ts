@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const reducer = require('geofences-reducer')
+import * as reducer from '../src/index'
 
 const geofences = require('./geofences.json')
 
@@ -35,7 +35,8 @@ test('reduces geofences', () => {
     { latitude: 48.2285, longitude: 13.02369, radius: 40000 },
     { latitude: 48.25849, longitude: 13.03559, radius: 40000 },
     { latitude: 48.22809, longitude: 14.8465, radius: 40000 },
-    { latitude: 48.18239, longitude: 13.78149, radius: 40000 }
+    { latitude: 48.18239, longitude: 13.78149, radius: 40000 },
+    { latitude: 48.2946, longitude: 14.2868, radius: 40000 }
   ])
 })
 
@@ -62,7 +63,7 @@ test('reduces geofences with custom precision', () => {
 })
 
 test('throws error if geofences are invalid', () => {
-  expect(() => { reducer.reduce({}) }).toThrow('Geofences must be an array')
+  expect(() => { reducer.reduce({} as unknown as []) }).toThrow('Geofences must be an array')
 })
 
 test('throws error if latitude is invalid', () => {
@@ -113,7 +114,7 @@ test('throws error if radius is invalid', () => {
 test('throws error if precision is invalid', () => {
   const config = { precision: 0 }
   
-  config.precision = 'foo'
+  config.precision = 'foo' as unknown as number
   expect(() => { reducer.reduce(geofences, config) }).toThrow('Precision level must be a number between 1 and 12')
 
   config.precision = 0

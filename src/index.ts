@@ -16,27 +16,38 @@
 
 'use strict'
 
-const vicinityhash = require('vicinityhash')
+import * as vicinityhash from 'vicinityhash'
 
-exports.reduce = (geofences, config = { precision: 6 }) => {
+type Geofence = {
+  latitude: number
+  longitude: number
+  radius: number
+}
+
+const defaultPrecision = 6
+
+export function reduce (
+  geofences: Geofence[],
+  config = { precision: 6 })
+{
   validateGeofences(geofences)
   if (config) validateConfig(config)
   
-  const geofencesDeduplicated = deduplicate(geofences)
+  const geofencesDeduplicated: Geofence[] = deduplicate(geofences)
   const geohashes = convertToGeohash(geofencesDeduplicated, config.precision)
 
-  const geofencesReduced = []
-  const geofencesRemoved = []
-  const geohashesRemoved = []
+  const geofencesReduced: Geofence[] = []
+  const geofencesRemoved: Geofence[] = []
+  const geohashesRemoved: string[][] = []
 
   // Calculate border
   for (let index = 0; index < geofencesDeduplicated.length; index++) {
-    const geofence = geofencesDeduplicated[index]
-    const geofenceGeohashes = geohashes[index]
+    const geofence: Geofence = geofencesDeduplicated[index]
+    const geofenceGeohashes: string[] = geohashes[index]
 
     let geohashesCopy = geohashes.slice()
     geohashesCopy.splice(index, 1)
-    const otherGeohashes = [ ...new Set(geohashesCopy.flat()) ]
+    const otherGeohashes: string[] = [ ...new Set(geohashesCopy.flat()) ]
 
     if (containsUniqueGeohash(geofenceGeohashes, otherGeohashes)) {
       geofencesReduced.push(geofence)
@@ -52,7 +63,7 @@ exports.reduce = (geofences, config = { precision: 6 }) => {
   // Calculate center
   for (let index = 0; index < geofencesRemoved.length; index++) {
     const geofence = geofencesRemoved[index]
-    const geofenceGeohashes = geohashesRemoved[index]
+    const geofenceGeohashes: string[] = geohashesRemoved[index]
 
     if (containsUniqueGeohash(geofenceGeohashes, geohashesCoveredUnique)) {
       geofencesReduced.push(geofence)
@@ -63,13 +74,13 @@ exports.reduce = (geofences, config = { precision: 6 }) => {
   return geofencesReduced
 }
 
-function validateGeofences(geofences) {
+function validateGeofences(geofences: Geofence[]) {
   if (!Array.isArray(geofences)) throw new Error('Geofences must be an array')
 
   geofences.forEach(geofence => validateGeofence(geofence))
 }
 
-function validateGeofence(geofence) {
+function validateGeofence(geofence: Geofence) {
   const { latitude, longitude, radius } = geofence
 
   if (isNaN(latitude) || latitude < -90 || latitude > 90) {
@@ -83,7 +94,7 @@ function validateGeofence(geofence) {
   }
 }
 
-function validateConfig(config) {
+function validateConfig(config: { precision: number }) {
   const { precision = defaultPrecision } = config
 
   if (isNaN(precision) || !Number.isInteger(precision) || precision < 1 || precision > 12) {
@@ -91,7 +102,7 @@ function validateConfig(config) {
   }
 }
 
-function deduplicate(geofences) {
+function deduplicate(geofences: Geofence[]): Geofence[] {
   return geofences.filter((geofence, index, geofences) => {
     const indexFound = geofences.findIndex(geofenceFound =>
       areGeofencesEqual(geofenceFound, geofence)
@@ -104,14 +115,14 @@ function deduplicate(geofences) {
   })
 }
 
-function areGeofencesEqual(subject, target) {
+function areGeofencesEqual(subject: Geofence, target: Geofence): boolean {
   if (subject.latitude !== target.latitude) return false
   if (subject.longitude !== target.longitude) return false
   if (subject.radius !== target.radius) return false
   return true
 }
 
-function convertToGeohash(geofences, precision) {
+function convertToGeohash(geofences: Geofence[], precision: number) {
   return geofences.map(geofence =>
     vicinityhash.convert(
       geofence,
@@ -124,7 +135,7 @@ function convertToGeohash(geofences, precision) {
   ))
 }
 
-function containsUniqueGeohash(subset, set) {
+function containsUniqueGeohash(subset: string[], set: string[]): boolean {
   for (const subsetPart of subset) {
     let unique = false
     for (const setPart of set) {
