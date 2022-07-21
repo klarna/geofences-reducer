@@ -15,13 +15,13 @@ Given a list of circular geofences, this library removes the overlapping items a
 Via npm:
 
 ```sh
-npm install --save geofences-reducer
+npm install --save @klarna/geofences-reducer
 ```
 
 Via yarn:
 
 ```sh
-yarn add geofences-reducer
+yarn add @klarna/geofences-reducer
 ```
 
 ### Usage
@@ -29,7 +29,7 @@ yarn add geofences-reducer
 With JavaScript:
 
 ```javascript
-const reducer = require('geofences-reducer')
+const reducer = require('@klarna/geofences-reducer')
 
 const geofences = [
   {
@@ -70,7 +70,7 @@ const geofencesReduced = reducer.reduce(geofences)
 With TypeScript:
 
 ```typescript
-import * as reducer from 'geofences-reducer'
+import * as reducer from '@klarna/geofences-reducer'
 
 type Geofence = {
   latitude: number
