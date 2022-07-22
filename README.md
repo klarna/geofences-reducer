@@ -116,7 +116,7 @@ const geofencesReduced: Geofence[] = reducer.reduce(geofences)
 
 Result:
 
-![Geohashes](./images/geofences_reduced.png)
+![Geohashes](./docs/images/geofences_reduced.png)
 
 ### Optional Configuration
 
