@@ -32,7 +32,7 @@ export function reduce (
   if (config) validateConfig(config)
   
   const geofencesDeduplicated: Geofence[] = deduplicate(geofences)
-  const geohashes = convertToGeohash(geofencesDeduplicated, config.precision)
+  const geohashes: string[][] = convertToGeohash(geofencesDeduplicated, config.precision)
 
   const geofencesReduced: Geofence[] = []
   const geofencesRemoved: Geofence[] = []
@@ -43,7 +43,7 @@ export function reduce (
     const geofence: Geofence = geofencesDeduplicated[index]
     const geofenceGeohashes: string[] = geohashes[index]
 
-    let geohashesCopy = geohashes.slice()
+    const geohashesCopy: string[][] = geohashes.slice()
     geohashesCopy.splice(index, 1)
     const otherGeohashes: string[] = [ ...new Set(geohashesCopy.flat()) ]
 
@@ -55,8 +55,8 @@ export function reduce (
     }
   }
 
-  const geohashesCovered = convertToGeohash(geofencesReduced, config.precision)
-  let geohashesCoveredUnique = [ ...new Set(geohashesCovered.flat()) ]
+  const geohashesCovered: string[][] = convertToGeohash(geofencesReduced, config.precision)
+  let geohashesCoveredUnique: string[] = [ ...new Set(geohashesCovered.flat()) ]
 
   // Find geofences within removed that contains missing geohashes
   for (let index = 0; index < geofencesRemoved.length; index++) {
@@ -73,7 +73,9 @@ export function reduce (
 }
 
 function validateGeofences(geofences: Geofence[]) {
-  if (!Array.isArray(geofences)) throw new Error('Geofences must be an array')
+  if (!Array.isArray(geofences)) {
+    throw new Error('Geofences must be an array')
+  }
 
   geofences.forEach(geofence => validateGeofence(geofence))
 }
@@ -102,14 +104,9 @@ function validateConfig(config: { precision: number }) {
 
 function deduplicate(geofences: Geofence[]): Geofence[] {
   return geofences.filter((geofence, index, geofences) => {
-    const indexFound: number = geofences.findIndex(geofenceFound =>
+    return index === geofences.findIndex(geofenceFound =>
       areGeofencesEqual(geofenceFound, geofence)
     )
-
-    if (index === indexFound) {
-      return true
-    }
-    return false
   })
 }
 
