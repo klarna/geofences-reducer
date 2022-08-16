@@ -26,12 +26,17 @@ const defaultPrecision = 6
 
 export function reduce (
   geofences: Geofence[],
-  config = { precision: 6 })
-{
+  config = { precision: defaultPrecision }
+): Geofence[] {
   validateGeofences(geofences)
   if (config) validateConfig(config)
+
+  if (geofences.length === 0) return geofences
   
   const geofencesDeduplicated: Geofence[] = deduplicate(geofences)
+
+  if (geofencesDeduplicated.length === 1) return geofencesDeduplicated
+
   const geohashes: string[][] = convertToGeohash(geofencesDeduplicated, config.precision)
 
   const geofencesReduced: Geofence[] = []
