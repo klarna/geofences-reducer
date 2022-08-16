@@ -19,6 +19,14 @@ import * as reducer from '../src/index'
 const geofences = require('./geofences.json')
 
 test('reduces geofences', () => {
+  expect(reducer.reduce([])).toEqual([])
+
+  expect(reducer.reduce([
+    { latitude: 90, longitude: 180, radius: 500 }
+  ])).toEqual([
+    { latitude: 90, longitude: 180, radius: 500 }
+  ])
+
   expect(reducer.reduce(geofences)).toEqual([
     { latitude: 48.64989, longitude: 13.96389, radius: 40000 },
     { latitude: 48.4043, longitude: 14.836, radius: 40000 },
