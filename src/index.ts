@@ -40,6 +40,7 @@ export function reduce (
   const geohashes: string[][] = convertToGeohash(geofencesDeduplicated, config.precision)
 
   const geofencesReduced: Geofence[] = []
+  const geofencesReducedIndexes: number[] = []
   const geofencesRemoved: Geofence[] = []
   const geohashesRemoved: string[][] = []
 
@@ -54,13 +55,17 @@ export function reduce (
 
     if (containsUniqueGeohash(geofenceGeohashes, otherGeohashes)) {
       geofencesReduced.push(geofence)
+      geofencesReducedIndexes.push(index)
     } else {
       geofencesRemoved.push(geofence)
       geohashesRemoved.push(geofenceGeohashes)
     }
   }
 
-  const geohashesCovered: string[][] = convertToGeohash(geofencesReduced, config.precision)
+  const geohashesCovered: string[][] = []
+  for (let index = 0; index < geofencesReducedIndexes.length; index++) {
+    geohashesCovered.push(geohashes[geofencesReducedIndexes[index]])
+  }
   let geohashesCoveredUnique: string[] = [ ...new Set(geohashesCovered.flat()) ]
 
   // Find geofences within removed that contains missing geohashes
@@ -70,7 +75,7 @@ export function reduce (
 
     if (containsUniqueGeohash(geofenceGeohashes, geohashesCoveredUnique)) {
       geofencesReduced.push(geofence)
-      geohashesCoveredUnique = geohashesCoveredUnique.concat(geofenceGeohashes)
+      geohashesCoveredUnique = [ ...new Set(geohashesCoveredUnique.concat(geofenceGeohashes).flat()) ]
     }
   }
 
@@ -136,6 +141,8 @@ function convertToGeohash(geofences: Geofence[], precision: number) {
 }
 
 function containsUniqueGeohash(subset: string[], set: string[]): boolean {
+  if (subset.length > set.length) return true
+
   for (const subsetPart of subset) {
     let unique: boolean = false
     for (const setPart of set) {
@@ -145,9 +152,7 @@ function containsUniqueGeohash(subset: string[], set: string[]): boolean {
       }
     }
 
-    if (!unique) {
-      return true
-    }
+    if (!unique) return true
   }
   return false
 }
