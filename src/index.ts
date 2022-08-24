@@ -24,6 +24,12 @@ type Geofence = {
 
 const defaultPrecision = 6
 
+interface UniquenessMemoization {
+  [key: string]: any
+}
+
+const uniquenessMemoization: UniquenessMemoization = {}
+
 export function reduce (
   geofences: Geofence[],
   config = { precision: defaultPrecision }
@@ -143,16 +149,27 @@ function convertToGeohash(geofences: Geofence[], precision: number) {
 function containsUniqueGeohash(subset: string[], set: string[]): boolean {
   if (subset.length > set.length) return true
 
+  const setKey = set.join()
+  if (uniquenessMemoization[setKey] === undefined) {
+    uniquenessMemoization[setKey] = {}
+  }
+
+  if (uniquenessMemoization[setKey][subset.join()] === false) return false
+
   for (const subsetPart of subset) {
-    let unique: boolean = false
+    if (uniquenessMemoization[setKey][subsetPart] === true) return true
+
+    let found: boolean = false
     for (const setPart of set) {
       if (subsetPart.includes(setPart)) {
-        unique = true
+        found = true
+        uniquenessMemoization[setKey][subset.join()] = false
         break
       }
     }
+    uniquenessMemoization[setKey][subsetPart] = !found
 
-    if (!unique) return true
+    if (!found) return true
   }
   return false
 }
