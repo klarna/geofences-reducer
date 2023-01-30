@@ -15,13 +15,13 @@ Given a list of circular geofences, this library removes the overlapping items a
 Via npm:
 
 ```sh
-npm install --save https://github.com/klarna-incubator/geofences-reducer
+npm install @klarna/geofences-reducer --save
 ```
 
 Via yarn:
 
 ```sh
-yarn add https://github.com/klarna-incubator/geofences-reducer
+yarn add @klarna/geofences-reducer
 ```
 
 ### Usage
