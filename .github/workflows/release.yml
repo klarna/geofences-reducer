@@ -1,12 +1,27 @@
-name: Publish
+name: Release
 
 on:
-  release:
-    types: [ created ]
+  push:
+    branches: [ master ]
 
 jobs:
-  publish:
+  release:
+    name: Release
     runs-on: ubuntu-latest
+    outputs:
+      created: ${{ steps.release.outputs.release_created }}
+    steps:
+      - name: Release
+        uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: node
+          package-name: '@klarna/geofences-reducer'
+  publish:
+    name: Publish
+    needs: release
+    runs-on: ubuntu-latest
+    if: ${{ needs.release.outputs.created }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
