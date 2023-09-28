@@ -25,7 +25,7 @@
   "author": "Filipe Correa <filipecorrea@me.com> (http://github.com/filipecorrea)",
   "license": "Apache-2.0",
   "dependencies": {
-    "vicinityhash": "^2.1.0"
+    "vicinityhash": "^2.4.0"
   },
   "devDependencies": {
     "@types/jest": "^28.1.6",
