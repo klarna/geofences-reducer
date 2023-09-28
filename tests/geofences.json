@@ -65,6 +65,11 @@
     "radius": 40000
   },
   {
+    "latitude": 48.64989,
+    "longitude": 13.96389,
+    "radius": 10000
+  },
+  {
     "latitude": 48.32279,
     "longitude": 14.2888,
     "radius": 40000

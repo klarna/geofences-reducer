@@ -32,12 +32,8 @@ export function reduce (
   if (config) validateConfig(config)
 
   if (geofences.length === 0) return geofences
-  
-  const geofencesDeduplicated: Geofence[] = deduplicate(geofences)
 
-  if (geofencesDeduplicated.length === 1) return geofencesDeduplicated
-
-  const geohashes: string[][] = convertToGeohash(geofencesDeduplicated, config.precision)
+  const geohashes: string[][] = convertToGeohash(geofences, config.precision)
 
   const geofencesReduced: Geofence[] = []
   const geofencesReducedIndexes: number[] = []
@@ -45,8 +41,8 @@ export function reduce (
   const geohashesRemoved: string[][] = []
 
   // Find geofences with unique geohashes
-  for (let index = 0; index < geofencesDeduplicated.length; index++) {
-    const geofence: Geofence = geofencesDeduplicated[index]
+  for (let index = 0; index < geofences.length; index++) {
+    const geofence: Geofence = geofences[index]
     const geofenceGeohashes: string[] = geohashes[index]
 
     const geohashesCopy: string[][] = geohashes.slice()
@@ -110,21 +106,6 @@ function validateConfig(config: { precision: number }) {
   if (isNaN(precision) || !Number.isInteger(precision) || precision < 1 || precision > 12) {
     throw new Error('Precision level must be a number between 1 and 12')
   }
-}
-
-function deduplicate(geofences: Geofence[]): Geofence[] {
-  return geofences.filter((geofence, index, geofences) => {
-    return index === geofences.findIndex(geofenceFound =>
-      areGeofencesEqual(geofenceFound, geofence)
-    )
-  })
-}
-
-function areGeofencesEqual(subject: Geofence, target: Geofence): boolean {
-  if (subject.latitude !== target.latitude) return false
-  if (subject.longitude !== target.longitude) return false
-  if (subject.radius !== target.radius) return false
-  return true
 }
 
 function convertToGeohash(geofences: Geofence[], precision: number) {
