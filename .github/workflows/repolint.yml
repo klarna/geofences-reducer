@@ -22,7 +22,7 @@ jobs:
         run: npm install is-windows
 
       - name: Use custom rules
-        run: wget https://raw.githubusercontent.com/klarna/meta/master/repolint.json
+        run: wget https://raw.githubusercontent.com/klarna-incubator/meta/master/repolint.json
 
       - name: Run repolint
         run: ./node_modules/.bin/repolinter $GITHUB_WORKSPACE
