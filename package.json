@@ -1,6 +1,6 @@
 {
   "name": "@klarna/geofences-reducer",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Reduces overlapping geofences",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
