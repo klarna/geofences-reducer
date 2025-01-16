@@ -16,7 +16,7 @@
 
 import * as vicinityhash from 'vicinityhash'
 
-type Geofence = {
+export type Geofence = {
   latitude: number
   longitude: number
   radius: number
@@ -33,10 +33,12 @@ export function reduce (
 
   if (geofences.length === 0) return geofences
 
-  const geohashesList: string[][] = convertToGeohash(geofences, config.precision)
-  const geohashFrequency = geohashesList.flat().reduce((freqMap, geohash) => {
-	freqMap.set(geohash, (freqMap.get(geohash) || 0) + 1);
-	return freqMap;
+  const geohashesList: string[][] = convertToGeohash(geofences, config.precision).map((geohashes) => [
+    ...new Set(geohashes)
+  ])
+  const geohashFrequency = geohashesList.flat().reduce((geohashFrequencyMap, geohash) => {
+  geohashFrequencyMap.set(geohash, (geohashFrequencyMap.get(geohash) || 0) + 1);
+	return geohashFrequencyMap;
   }, new Map<string, number>());
 
   const selectedGeofences: Geofence[] = []
@@ -56,9 +58,6 @@ export function reduce (
 
   remainingGeofences.forEach(({ geofence, geohashes }) => {
     const newGeohashes = geohashes.filter((geohash) => !coveredGeohashes.has(geohash))
-    if(geofence.latitude === 48.2946) {
-      console.log(newGeohashes)
-    }
     if (newGeohashes.length > 0) {
       selectedGeofences.push(geofence)
       newGeohashes.forEach((geohash) => coveredGeohashes.add(geohash))
@@ -104,9 +103,7 @@ function convertToGeohash(geofences: Geofence[], precision: number) {
       geofence,
       {
         precision,
-        compress: false,
-        compressMin: 1,
-        compressMax: precision
+        compress: false
       }
   ))
 }
