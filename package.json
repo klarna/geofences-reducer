@@ -11,7 +11,7 @@
     "test": "npm run test:unit",
     "test:unit": "jest --config config/jest.unit.config.ts",
     "test:performance": "jest --config config/jest.performance.config.ts",
-    "test:coverage": "jest --config config/jest.config.ts --coverage",
+    "test:coverage": "jest --config config/jest.performance.config.ts --coverage",
     "build": "tsc -p config/tsconfig.json"
   },
   "repository": {
