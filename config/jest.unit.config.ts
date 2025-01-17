@@ -8,7 +8,9 @@ const config: Config.InitialOptions = {
   },
   preset: 'ts-jest',
   rootDir: '../',
-  testEnvironment: 'node'
+  testEnvironment: 'node',
+  testMatch: ['<rootDir>/tests/unit/*.test.ts'],
+  collectCoverage: false,
 }
 
 export default config

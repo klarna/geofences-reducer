@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import * as reducer from '../src/index'
+import * as reducer from '../../src/index'
+import * as vicinityhash from 'vicinityhash';
+import { Geofence } from '../../src/index';
 
 const geofences = require('./geofences.json')
 
@@ -27,7 +29,7 @@ test('reduces geofences', () => {
     { latitude: 90, longitude: 180, radius: 500 }
   ])
 
-  expect(reducer.reduce(geofences)).toEqual([
+  expect(reducer.reduce(geofences)).toEqual(    [
     { latitude: 48.64989, longitude: 13.96389, radius: 40000 },
     { latitude: 48.4043, longitude: 14.836, radius: 40000 },
     { latitude: 47.86719, longitude: 13.3261, radius: 40000 },
@@ -43,8 +45,7 @@ test('reduces geofences', () => {
     { latitude: 48.2285, longitude: 13.02369, radius: 40000 },
     { latitude: 48.25849, longitude: 13.03559, radius: 40000 },
     { latitude: 48.22809, longitude: 14.8465, radius: 40000 },
-    { latitude: 48.18239, longitude: 13.78149, radius: 40000 },
-    { latitude: 48.2946, longitude: 14.2868, radius: 40000 }
+    { latitude: 48.18239, longitude: 13.78149, radius: 40000 }
   ])
 })
 
@@ -64,11 +65,33 @@ test('reduces geofences with custom precision', () => {
     { latitude: 48.678, longitude: 13.90909, radius: 40000 },
     { latitude: 48.2285, longitude: 13.02369, radius: 40000 },
     { latitude: 48.22809, longitude: 14.8465, radius: 40000 },
-    { latitude: 48.18239, longitude: 13.78149, radius: 40000 },
-    { latitude: 48.2946, longitude: 14.2868, radius: 40000 },
     { latitude: 48.256, longitude: 13.0367, radius: 40000 }
   ])
 })
+
+test.each([3, 4, 5, 6, 7])(
+  'ensures unique geohashes list of input matches output geofences at precision %i',
+  (precision) => {
+    const config = { precision };
+    const reducedGeofences = reducer.reduce(geofences, config);
+
+    const inputGeohashes = new Set(
+      geofences
+        .flatMap((geofence: Geofence) =>
+          vicinityhash.convert(geofence, { precision })
+        )
+    );
+
+    const outputGeohashes = new Set(
+      reducedGeofences
+        .flatMap((geofence: Geofence) =>
+          vicinityhash.convert(geofence, { precision })
+        )
+    );
+
+    expect(inputGeohashes).toEqual(outputGeohashes);
+  }
+);
 
 test('throws error if geofences are invalid', () => {
   expect(() => { reducer.reduce({} as unknown as []) }).toThrow('Geofences must be an array')

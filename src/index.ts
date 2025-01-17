@@ -16,7 +16,7 @@
 
 import * as vicinityhash from 'vicinityhash'
 
-type Geofence = {
+export type Geofence = {
   latitude: number
   longitude: number
   radius: number
@@ -33,49 +33,38 @@ export function reduce (
 
   if (geofences.length === 0) return geofences
 
-  const geohashes: string[][] = convertToGeohash(geofences, config.precision)
+  const geohashesList: string[][] = convertToGeohash(geofences, config.precision).map((geohashes) => [
+    ...new Set(geohashes)
+  ])
+  const geohashFrequency = geohashesList.flat().reduce((geohashFrequencyMap, geohash) => {
+  geohashFrequencyMap.set(geohash, (geohashFrequencyMap.get(geohash) || 0) + 1);
+	return geohashFrequencyMap;
+  }, new Map<string, number>());
 
-  const geofencesReduced: Geofence[] = []
-  const geofencesReducedIndexes: number[] = []
-  const geofencesRemoved: Geofence[] = []
-  const geohashesRemoved: string[][] = []
+  const selectedGeofences: Geofence[] = []
+  const coveredGeohashes: Set<string> = new Set()
+  const remainingGeofences: { geofence: Geofence; geohashes: string[] }[] = []
 
-  // Find geofences with unique geohashes
-  for (let index = 0; index < geofences.length; index++) {
-    const geofence: Geofence = geofences[index]
-    const geofenceGeohashes: string[] = geohashes[index]
-
-    const geohashesCopy: string[][] = geohashes.slice()
-    geohashesCopy.splice(index, 1)
-    const otherGeohashes: string[] = [ ...new Set(geohashesCopy.flat()) ]
-
-    if (containsUniqueGeohash(geofenceGeohashes, otherGeohashes)) {
-      geofencesReduced.push(geofence)
-      geofencesReducedIndexes.push(index)
+  geofences.forEach((geofence, index) => {
+    const geohashes = geohashesList[index]
+    const hasUniqueGeohash = geohashes.some((geohash) => geohashFrequency.get(geohash) === 1)
+    if (hasUniqueGeohash) {
+      selectedGeofences.push(geofence)
+      geohashes.forEach((geohash) => coveredGeohashes.add(geohash))
     } else {
-      geofencesRemoved.push(geofence)
-      geohashesRemoved.push(geofenceGeohashes)
+      remainingGeofences.push({ geofence, geohashes })
     }
-  }
+  })
 
-  const geohashesCovered: string[][] = []
-  for (let index = 0; index < geofencesReducedIndexes.length; index++) {
-    geohashesCovered.push(geohashes[geofencesReducedIndexes[index]])
-  }
-  let geohashesCoveredUnique: string[] = [ ...new Set(geohashesCovered.flat()) ]
-
-  // Find geofences within removed that contains missing geohashes
-  for (let index = 0; index < geofencesRemoved.length; index++) {
-    const geofence = geofencesRemoved[index]
-    const geofenceGeohashes: string[] = geohashesRemoved[index]
-
-    if (containsUniqueGeohash(geofenceGeohashes, geohashesCoveredUnique)) {
-      geofencesReduced.push(geofence)
-      geohashesCoveredUnique = [ ...new Set(geohashesCoveredUnique.concat(geofenceGeohashes).flat()) ]
+  remainingGeofences.forEach(({ geofence, geohashes }) => {
+    const newGeohashes = geohashes.filter((geohash) => !coveredGeohashes.has(geohash))
+    if (newGeohashes.length > 0) {
+      selectedGeofences.push(geofence)
+      newGeohashes.forEach((geohash) => coveredGeohashes.add(geohash))
     }
-  }
+  })
 
-  return geofencesReduced
+  return selectedGeofences
 }
 
 function validateGeofences(geofences: Geofence[]) {
@@ -114,27 +103,7 @@ function convertToGeohash(geofences: Geofence[], precision: number) {
       geofence,
       {
         precision,
-        compress: true,
-        compressMin: 1,
-        compressMax: precision
+        compress: false
       }
   ))
-}
-
-function containsUniqueGeohash(subset: string[], set: string[]): boolean {
-  if (subset.length > set.length) return true
-
-  const setKey = set.join()
-  for (const subsetPart of subset) {
-    let found: boolean = false
-    for (const setPart of set) {
-      if (subsetPart.includes(setPart)) {
-        found = true
-        break
-      }
-    }
-
-    if (!found) return true
-  }
-  return false
 }
