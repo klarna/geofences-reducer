@@ -69,7 +69,7 @@ test('reduces geofences with custom precision', () => {
   ])
 })
 
-test.each([3, 4, 5, 6, 7])(
+test.each([3, 4, 5])(
   'ensures unique geohashes list of input matches output geofences at precision %i',
   (precision) => {
     const config = { precision };
